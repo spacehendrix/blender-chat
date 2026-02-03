@@ -43,7 +43,7 @@ class BLENDERCHAT_OT_InstallDependencies(bpy.types.Operator):
         if modules_path not in sys.path:
             sys.path.insert(0, modules_path)
 
-        from . import __init__ as pkg
+        import blender_chat as pkg
         pkg.HAS_ANTHROPIC = pkg._check_anthropic()
 
         if pkg.HAS_ANTHROPIC:
