@@ -24,16 +24,23 @@ class BLENDERCHAT_UL_Messages(bpy.types.UIList):
         col = layout.column(align=True)
         # Role header
         row = col.row()
+
+        # For tool messages, add a disclosure toggle
+        if item.role == "tool":
+            icon = "DISCLOSURE_TRI_RIGHT" if item.is_collapsed else "DISCLOSURE_TRI_DOWN"
+            row.prop(item, "is_collapsed", text="", icon=icon, emboss=False, invert_checkbox=True)
+
         row.label(text=item.role.upper(), icon=role_icon)
 
         # Undo button for tool result messages
         if item.role == "tool" and item.content.startswith("Result:"):
             row.operator("blenderchat.undo_tool_call", text="", icon="LOOP_BACK")
 
-        # Word-wrapped content lines
-        lines = _wrap_text(item.content, _WRAP_WIDTH)
-        for line in lines:
-            col.label(text=line)
+        # Word-wrapped content lines (skip if collapsed)
+        if not (item.role == "tool" and item.is_collapsed):
+            lines = _wrap_text(item.content, _WRAP_WIDTH)
+            for line in lines:
+                col.label(text=line)
 
 
 class BLENDERCHAT_PT_ChatPanel(bpy.types.Panel):

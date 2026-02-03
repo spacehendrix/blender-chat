@@ -96,12 +96,13 @@ class BLENDERCHAT_OT_SendMessage(bpy.types.Operator):
             # Show tool call in UI if enabled
             if prefs.show_tool_calls:
                 input_str = json.dumps(tool_input, indent=2)
-                add_message(
+                msg = add_message(
                     context,
                     "tool",
                     f"Tool: {tool_name}\n{input_str}",
                     is_code=True,
                 )
+                msg.is_collapsed = True
 
             # Push undo step before executing tool
             bpy.ops.ed.undo_push(message=f"BlenderChat: {tool_name}")
@@ -111,12 +112,13 @@ class BLENDERCHAT_OT_SendMessage(bpy.types.Operator):
 
             # Show tool result in UI if enabled
             if prefs.show_tool_calls:
-                add_message(
+                msg = add_message(
                     context,
                     "tool",
                     f"Result: {result.get('result', '')}",
                     is_error=not result.get("success", False),
                 )
+                msg.is_collapsed = True
 
             # Send result back to thread
             api_client._tool_result_queue.put(result)

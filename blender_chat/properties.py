@@ -34,6 +34,11 @@ class BlenderChatMessageItem(bpy.types.PropertyGroup):
         default=False,
     )
 
+    is_collapsed: bpy.props.BoolProperty(
+        name="Collapsed",
+        default=False,
+    )
+
 
 def _on_input_confirmed(self, context):
     """Send message when the input field is confirmed (Enter key)."""
