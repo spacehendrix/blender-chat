@@ -9,7 +9,7 @@ _ROLE_ICONS = {
     "status": "INFO",
 }
 
-_WRAP_WIDTH = 45
+_WRAP_WIDTH = 56
 
 
 class BLENDERCHAT_UL_Messages(bpy.types.UIList):
