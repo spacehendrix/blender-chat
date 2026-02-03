@@ -105,11 +105,17 @@ class BLENDERCHAT_PT_ChatPanel(bpy.types.Panel):
         row.prop(props, "input_text", text="")
         row.operator("blenderchat.send_message", text="", icon="PLAY")
 
-        # Status / action row
+        # Status row
         row = layout.row(align=True)
         if props.is_busy:
             row.label(text="Thinking...", icon="SORTTIME")
-        row.operator("blenderchat.clear_chat", text="Clear", icon="TRASH")
+        else:
+            row.label(text="AI can make mistakes. Backup your work.", icon="INFO")
+
+        # New conversation button (right-aligned)
+        row = layout.row()
+        row.alignment = 'RIGHT'
+        row.operator("blenderchat.clear_chat", text="+ Start new conversation", icon="NONE")
 
 
 def _wrap_text(text, width):
