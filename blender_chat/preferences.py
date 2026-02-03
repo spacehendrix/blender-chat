@@ -72,10 +72,10 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
         name="Model",
         description="Claude model to use",
         items=[
-            ("claude-sonnet-4-5-20250514", "Claude Sonnet 4.5", "Balanced speed and capability"),
-            ("claude-haiku-4-5-20250514", "Claude Haiku 4.5", "Fastest responses"),
+            ("claude-sonnet-4-5-20250929", "Claude Sonnet 4.5", "Balanced speed and capability"),
+            ("claude-haiku-4-5-20251001", "Claude Haiku 4.5", "Fastest responses"),
         ],
-        default="claude-sonnet-4-5-20250514",
+        default="claude-sonnet-4-5-20250929",
     )
 
     show_tool_calls: bpy.props.BoolProperty(
