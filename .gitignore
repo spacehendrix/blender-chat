@@ -3,6 +3,9 @@
 .claude-mcp-backup
 .mcp.json
 
+__pycache__
+*.pyc
+
 .env
 .DS_Store
 node_modules
