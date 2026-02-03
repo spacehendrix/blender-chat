@@ -82,9 +82,9 @@ class BLENDERCHAT_PT_ChatPanel(bpy.types.Panel):
 
         props = context.scene.blenderchat
 
-        # Message list — fill ~95% of sidebar height dynamically
+        # Message list — fill ~40% of sidebar height dynamically
         region_height = context.region.height
-        available = int(region_height * 0.95) - 80
+        available = int(region_height * 0.40) - 80
         dynamic_rows = max(5, available // 20)
 
         row = layout.row()
