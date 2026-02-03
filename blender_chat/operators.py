@@ -194,8 +194,50 @@ class BLENDERCHAT_OT_UndoToolCall(bpy.types.Operator):
     bl_label = "Undo Tool Call"
     bl_description = "Undo the most recent Blender action"
 
+    message_index: bpy.props.IntProperty(name="Message Index", default=-1)
+
     def execute(self, context):
+        props = context.scene.blenderchat
+
+        # Save all messages before undo (undo reverts scene properties)
+        saved_messages = []
+        for msg in props.messages:
+            saved_messages.append({
+                "role": msg.role,
+                "content": msg.content,
+                "timestamp": msg.timestamp,
+                "is_code": msg.is_code,
+                "is_error": msg.is_error,
+                "is_collapsed": msg.is_collapsed,
+                "is_undone": msg.is_undone,
+            })
+        saved_active_index = props.active_message_index
+        saved_is_busy = props.is_busy
+
+        # Perform undo
         bpy.ops.ed.undo()
+
+        # Restore messages (undo reverted them)
+        props = context.scene.blenderchat
+        props.messages.clear()
+        for saved in saved_messages:
+            msg = props.messages.add()
+            msg.role = saved["role"]
+            msg.content = saved["content"]
+            msg.timestamp = saved["timestamp"]
+            msg.is_code = saved["is_code"]
+            msg.is_error = saved["is_error"]
+            msg.is_collapsed = saved["is_collapsed"]
+            msg.is_undone = saved["is_undone"]
+        props.active_message_index = saved_active_index
+        props.is_busy = saved_is_busy
+
+        # Mark clicked message and all subsequent tool messages as undone
+        if 0 <= self.message_index < len(props.messages):
+            for i in range(self.message_index, len(props.messages)):
+                if props.messages[i].role == "tool":
+                    props.messages[i].is_undone = True
+
         return {"FINISHED"}
 
 

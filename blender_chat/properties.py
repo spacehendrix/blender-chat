@@ -39,6 +39,11 @@ class BlenderChatMessageItem(bpy.types.PropertyGroup):
         default=False,
     )
 
+    is_undone: bpy.props.BoolProperty(
+        name="Undone",
+        default=False,
+    )
+
 
 def _on_input_confirmed(self, context):
     """Send message when the input field is confirmed (Enter key)."""
