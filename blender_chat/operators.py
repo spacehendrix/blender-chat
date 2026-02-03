@@ -103,6 +103,9 @@ class BLENDERCHAT_OT_SendMessage(bpy.types.Operator):
                     is_code=True,
                 )
 
+            # Push undo step before executing tool
+            bpy.ops.ed.undo_push(message=f"BlenderChat: {tool_name}")
+
             # Execute tool on main thread
             result = execute_tool(tool_name, tool_input)
 
@@ -184,9 +187,20 @@ class BLENDERCHAT_OT_ClearChat(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class BLENDERCHAT_OT_UndoToolCall(bpy.types.Operator):
+    bl_idname = "blenderchat.undo_tool_call"
+    bl_label = "Undo Tool Call"
+    bl_description = "Undo the most recent Blender action"
+
+    def execute(self, context):
+        bpy.ops.ed.undo()
+        return {"FINISHED"}
+
+
 _classes = [
     BLENDERCHAT_OT_SendMessage,
     BLENDERCHAT_OT_ClearChat,
+    BLENDERCHAT_OT_UndoToolCall,
 ]
 
 

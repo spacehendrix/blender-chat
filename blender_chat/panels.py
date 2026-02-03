@@ -26,6 +26,10 @@ class BLENDERCHAT_UL_Messages(bpy.types.UIList):
         row = col.row()
         row.label(text=item.role.upper(), icon=role_icon)
 
+        # Undo button for tool result messages
+        if item.role == "tool" and item.content.startswith("Result:"):
+            row.operator("blenderchat.undo_tool_call", text="", icon="LOOP_BACK")
+
         # Word-wrapped content lines
         lines = _wrap_text(item.content, _WRAP_WIDTH)
         for line in lines:

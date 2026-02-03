@@ -35,6 +35,15 @@ class BlenderChatMessageItem(bpy.types.PropertyGroup):
     )
 
 
+def _on_input_confirmed(self, context):
+    """Send message when the input field is confirmed (Enter key)."""
+    if not self.input_text.strip():
+        return
+    if self.is_busy:
+        return
+    bpy.ops.blenderchat.send_message('INVOKE_DEFAULT')
+
+
 class BlenderChatSceneProperties(bpy.types.PropertyGroup):
     messages: bpy.props.CollectionProperty(
         type=BlenderChatMessageItem
@@ -48,6 +57,7 @@ class BlenderChatSceneProperties(bpy.types.PropertyGroup):
     input_text: bpy.props.StringProperty(
         name="Message",
         default="",
+        update=_on_input_confirmed,
     )
 
     is_busy: bpy.props.BoolProperty(
