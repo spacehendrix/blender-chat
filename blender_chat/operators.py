@@ -44,12 +44,16 @@ class BLENDERCHAT_OT_SendMessage(bpy.types.Operator):
         props.input_text = ""
         props.is_busy = True
 
+        # Read blender version on main thread (bpy is not thread-safe)
+        blender_version = ".".join(str(v) for v in bpy.app.version)
+
         # Start async API call
         api_client.send_message_async(
             user_text=text,
             api_key=prefs.api_key,
             model=prefs.model,
             tools_list=BLENDER_TOOLS,
+            blender_version=blender_version,
         )
 
         # Start modal timer

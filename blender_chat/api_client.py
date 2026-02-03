@@ -40,7 +40,7 @@ def clear_conversation():
     _drain_queue(_tool_result_queue)
 
 
-def send_message_async(user_text, api_key, model, tools_list):
+def send_message_async(user_text, api_key, model, tools_list, blender_version):
     """Start a background thread to send a message to Claude.
 
     The thread communicates via _result_queue and _tool_result_queue.
@@ -58,13 +58,13 @@ def send_message_async(user_text, api_key, model, tools_list):
 
     t = threading.Thread(
         target=_thread_worker,
-        args=(api_key, model, tools_list),
+        args=(api_key, model, tools_list, blender_version),
         daemon=True,
     )
     t.start()
 
 
-def _thread_worker(api_key, model, tools_list):
+def _thread_worker(api_key, model, tools_list, blender_version):
     """Background thread: handles API calls and tool-use loop."""
     try:
         import anthropic
@@ -75,9 +75,6 @@ def _thread_worker(api_key, model, tools_list):
     # Request scene context from main thread
     _result_queue.put(("need_scene_context", None))
     scene_context = _tool_result_queue.get(timeout=30)
-
-    import bpy
-    blender_version = ".".join(str(v) for v in bpy.app.version)
 
     system_prompt = _SYSTEM_PROMPT.format(
         blender_version=blender_version,
