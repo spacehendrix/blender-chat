@@ -1,0 +1,11 @@
+.claude 
+.claude-backup
+.claude-mcp-backup
+.mcp.json
+
+.env
+.DS_Store
+node_modules
+dist
+build
+.next
