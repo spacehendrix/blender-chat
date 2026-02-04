@@ -32,16 +32,6 @@ class BLENDERCHAT_UL_Messages(bpy.types.UIList):
 
         row.label(text=item.role.upper(), icon=role_icon)
 
-        # Undo button or "UNDONE" label for tool messages
-        if item.role == "tool":
-            if item.is_undone:
-                sub = row.row()
-                sub.alert = True
-                sub.label(text="UNDONE")
-            elif item.content.startswith("Result:"):
-                op = row.operator("blenderchat.undo_tool_call", text="", icon="LOOP_BACK")
-                op.message_index = index
-
         # Word-wrapped content lines (skip if collapsed)
         if not (item.role == "tool" and item.is_collapsed):
             lines = _wrap_text(item.content, _WRAP_WIDTH)
