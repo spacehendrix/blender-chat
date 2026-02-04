@@ -62,7 +62,7 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     api_key: bpy.props.StringProperty(
-        name="Claude API Key (console.anthropic.com)",
+        name="Claude API Key (platform.claude.com)",
         description="Your Anthropic API key",
         subtype="PASSWORD",
         default="",
@@ -73,7 +73,7 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
         description="Claude model to use",
         items=[
             ("claude-sonnet-4-5-20250929", "Claude Sonnet 4.5", "Balanced speed and capability"),
-            ("claude-haiku-4-5-20251001", "Claude Haiku 4.5", "Fastest responses"),
+            ("claude-haiku-4-5-20251001", "Claude Haiku 4.5", "Lesser, faster, cheaper model."),
         ],
         default="claude-sonnet-4-5-20250929",
     )
