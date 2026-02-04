@@ -84,6 +84,14 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
         default=True,
     )
 
+    max_conversation_messages: bpy.props.IntProperty(
+        name="Max Conversation Messages",
+        description="Maximum number of messages kept in conversation history",
+        default=60,
+        min=10,
+        max=200,
+    )
+
     def draw(self, context):
         layout = self.layout
 
@@ -100,6 +108,7 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
         layout.prop(self, "api_key")
         layout.prop(self, "model")
         layout.prop(self, "show_tool_calls")
+        layout.prop(self, "max_conversation_messages")
 
 
 _classes = [

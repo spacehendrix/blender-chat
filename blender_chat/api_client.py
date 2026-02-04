@@ -33,9 +33,6 @@ Guidelines:
 Current scene state:
 {scene_context}"""
 
-_MAX_CONVERSATION_MESSAGES = 60
-
-
 def clear_conversation():
     """Reset conversation history."""
     global _conversation_messages
@@ -45,7 +42,7 @@ def clear_conversation():
     _drain_queue(_tool_result_queue)
 
 
-def send_message_async(user_text, api_key, model, tools_list, blender_version):
+def send_message_async(user_text, api_key, model, tools_list, blender_version, max_messages=60):
     """Start a background thread to send a message to Claude.
 
     The thread communicates via _result_queue and _tool_result_queue.
@@ -63,13 +60,13 @@ def send_message_async(user_text, api_key, model, tools_list, blender_version):
 
     t = threading.Thread(
         target=_thread_worker,
-        args=(api_key, model, tools_list, blender_version),
+        args=(api_key, model, tools_list, blender_version, max_messages),
         daemon=True,
     )
     t.start()
 
 
-def _thread_worker(api_key, model, tools_list, blender_version):
+def _thread_worker(api_key, model, tools_list, blender_version, max_messages):
     """Background thread: handles API calls and tool-use loop."""
     try:
         import anthropic
@@ -89,7 +86,7 @@ def _thread_worker(api_key, model, tools_list, blender_version):
     client = anthropic.Anthropic(api_key=api_key)
 
     # Trim conversation if too long
-    _trim_conversation()
+    _trim_conversation(max_messages)
 
     while True:
         try:
@@ -182,12 +179,11 @@ def _block_to_dict(block):
     return {"type": block.type}
 
 
-def _trim_conversation():
-    """Trim conversation to stay within token limits."""
+def _trim_conversation(max_messages):
+    """Trim conversation to stay within the configured limit."""
     global _conversation_messages
-    if len(_conversation_messages) > _MAX_CONVERSATION_MESSAGES:
-        # Keep the most recent messages
-        _conversation_messages = _conversation_messages[-_MAX_CONVERSATION_MESSAGES:]
+    if len(_conversation_messages) > max_messages:
+        _conversation_messages = _conversation_messages[-max_messages:]
 
 
 def _drain_queue(q):

@@ -54,6 +54,7 @@ class BLENDERCHAT_OT_SendMessage(bpy.types.Operator):
             model=prefs.model,
             tools_list=BLENDER_TOOLS,
             blender_version=blender_version,
+            max_messages=prefs.max_conversation_messages,
         )
 
         # Start modal timer
