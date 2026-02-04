@@ -14,8 +14,13 @@ Requires **Blender 4.2+**.
    ```
 2. In Blender: **Edit > Preferences > Add-ons > Install…** → select `blender_chat.zip`.
 3. Enable the **BlenderChat** checkbox.
-4. Click **Install Dependencies** if prompted (installs the `anthropic` package).
-5. Set your API key in the addon preferences.
+4. In the 3D view, click **N** to show the right tabs, then click the newly added **Chat** tab.
+5. Click **Install Dependencies** if prompted (installs the `anthropic` package).
+6. Set your API key in the addon preferences, and click away.
+7. You many now control Blender through chatting with Claude in the **Chat** tab.
+
+> Add AI credits and manage your API keys at https://platform.claude.com 
+
 
 ### Development (Symlink)
 
