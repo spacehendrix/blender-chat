@@ -62,7 +62,7 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     api_key: bpy.props.StringProperty(
-        name="API Key",
+        name="Claude API Key (console.anthropic.com)",
         description="Your Anthropic API key",
         subtype="PASSWORD",
         default="",
@@ -85,7 +85,7 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
     )
 
     max_conversation_messages: bpy.props.IntProperty(
-        name="Max Conversation Messages",
+        name="Prior messages included as context (incl. user/assistant/tools, less is faster/cheaper)",
         description="Maximum number of messages kept in conversation history",
         default=60,
         min=10,
