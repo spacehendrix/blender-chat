@@ -262,6 +262,94 @@ BLENDER_TOOLS = [
             "required": ["code"],
         },
     },
+    # ----- Discovery + Dispatch tools -----
+    {
+        "name": "list_operator_modules",
+        "description": "List all bpy.ops submodules (e.g. mesh, object, cloth) with operator counts.",
+        "input_schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        },
+    },
+    {
+        "name": "list_operators",
+        "description": "List operators in a bpy.ops submodule with their descriptions.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "module": {
+                    "type": "string",
+                    "description": "The bpy.ops submodule name (e.g. 'mesh', 'object', 'cloth').",
+                },
+                "filter": {
+                    "type": "string",
+                    "description": "Optional substring filter on operator name or description.",
+                },
+            },
+            "required": ["module"],
+        },
+    },
+    {
+        "name": "get_operator_info",
+        "description": "Get full parameter schema for a bpy.ops operator via RNA introspection.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "module": {
+                    "type": "string",
+                    "description": "The bpy.ops submodule name (e.g. 'mesh').",
+                },
+                "operator": {
+                    "type": "string",
+                    "description": "The operator name (e.g. 'primitive_cube_add').",
+                },
+            },
+            "required": ["module", "operator"],
+        },
+    },
+    {
+        "name": "call_operator",
+        "description": "Call any bpy.ops operator by module and name with optional parameters. "
+                       "Parameters are automatically coerced to the correct types.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "module": {
+                    "type": "string",
+                    "description": "The bpy.ops submodule name (e.g. 'object').",
+                },
+                "operator": {
+                    "type": "string",
+                    "description": "The operator name (e.g. 'modifier_add').",
+                },
+                "params": {
+                    "type": "object",
+                    "description": "Operator parameters as key-value pairs.",
+                },
+            },
+            "required": ["module", "operator"],
+        },
+    },
+    {
+        "name": "query_blender_data",
+        "description": "Read from bpy.data or bpy.context via a safe expression. "
+                       "Expression must start with 'bpy.data' or 'bpy.context'.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string",
+                    "description": "A Python expression starting with 'bpy.data' or 'bpy.context' (e.g. 'bpy.context.active_object.modifiers[-1].settings').",
+                },
+                "max_depth": {
+                    "type": "integer",
+                    "description": "Max depth for serializing nested objects. Default 1.",
+                },
+            },
+            "required": ["expression"],
+        },
+    },
 ]
 
 
@@ -284,6 +372,11 @@ def execute_tool(name, tool_input):
         "set_camera": _handle_set_camera,
         "add_light": _handle_add_light,
         "execute_bpy_code": _handle_execute_bpy_code,
+        "list_operator_modules": _handle_list_operator_modules,
+        "list_operators": _handle_list_operators,
+        "get_operator_info": _handle_get_operator_info,
+        "call_operator": _handle_call_operator,
+        "query_blender_data": _handle_query_blender_data,
     }
 
     handler = handlers.get(name)
@@ -548,6 +641,44 @@ def _handle_execute_bpy_code(params):
         return {"success": True, "result": str(result_val)}
 
     return {"success": True, "result": "Code executed successfully (no result variable set)"}
+
+
+# ---------------------------------------------------------------------------
+# Discovery + Dispatch Handlers
+# ---------------------------------------------------------------------------
+
+def _handle_list_operator_modules(params):
+    from .introspection import list_op_modules
+    modules = list_op_modules()
+    return {"success": True, "result": json.dumps(modules)}
+
+
+def _handle_list_operators(params):
+    from .introspection import list_ops_in_module
+    module_name = params["module"]
+    filter_str = params.get("filter")
+    ops = list_ops_in_module(module_name, filter_str)
+    if ops is None:
+        return {"success": False, "result": f"Module 'bpy.ops.{module_name}' not found."}
+    return {"success": True, "result": json.dumps(ops)}
+
+
+def _handle_get_operator_info(params):
+    from .introspection import get_op_info
+    info = get_op_info(params["module"], params["operator"])
+    if info is None:
+        return {"success": False, "result": f"Operator 'bpy.ops.{params['module']}.{params['operator']}' not found."}
+    return {"success": True, "result": json.dumps(info)}
+
+
+def _handle_call_operator(params):
+    from .introspection import call_op
+    return call_op(params["module"], params["operator"], params.get("params"))
+
+
+def _handle_query_blender_data(params):
+    from .introspection import evaluate_data_expression
+    return evaluate_data_expression(params["expression"], params.get("max_depth", 1))
 
 
 # ---------------------------------------------------------------------------

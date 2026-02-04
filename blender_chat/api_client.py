@@ -17,12 +17,17 @@ that let you create objects, set materials, modify the scene, and execute arbitr
 Python code via bpy.
 
 Guidelines:
-- Use the structured tools (create_object, set_material, etc.) for common operations.
-- Use execute_bpy_code for anything the structured tools don't cover.
-- When using execute_bpy_code, write clean Python that uses bpy and mathutils.
+- Use the convenience tools (create_object, set_material, etc.) for common operations.
+- For anything else, use the discovery workflow:
+  1. list_operator_modules — see available bpy.ops modules
+  2. list_operators — browse operators in a module (use filter to narrow)
+  3. get_operator_info — inspect parameters before calling
+  4. call_operator — execute any bpy.ops operator with auto type coercion
+- Use query_blender_data to inspect scene state (e.g. bpy.context.active_object.modifiers).
+- Use execute_bpy_code only for multi-step logic, loops, or complex property setting.
   Assign any value you want to return to a variable called `result`.
 - Always explain what you're doing before and after using tools.
-- If a tool returns an error, explain the issue and try an alternative approach.
+- If an operator poll fails, check the error for current mode/selection and fix context first.
 - Be concise but helpful.
 
 Current scene state:
