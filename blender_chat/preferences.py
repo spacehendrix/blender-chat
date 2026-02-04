@@ -105,7 +105,7 @@ class BlenderChatPreferences(bpy.types.AddonPreferences):
             box.label(text="Click above to install, then restart Blender.")
             layout.separator()
 
-        layout.label(text="Manage Credits and Private API Keys at 'platform.claude.com'.")
+        layout.label(text="Manage Credits and Private API Keys on 'platform.claude.com'.")
         layout.prop(self, "api_key")
         layout.prop(self, "model")
         layout.prop(self, "show_tool_calls")
